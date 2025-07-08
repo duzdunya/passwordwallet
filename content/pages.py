@@ -173,16 +173,16 @@ class ContentPage(ctk.CTkScrollableFrame):
         self.add_button = ctk.CTkButton(self, text="Add", command=self.callback_add, corner_radius=0)
         self.add_button.grid(row=len(decrypted)+1, column=3, pady=(30,0), sticky="nsew")
 
-        self.quit_button = ctk.CTkButton(self, text="Quit", command=self.quit_button, corner_radius=0, fg_color="#F23333", hover_color="#C62828")
+        self.quit_button = ctk.CTkButton(self, text="Quit", command=self.quit_callback, corner_radius=0, fg_color="#F23333", hover_color="#C62828")
         self.quit_button.grid(row=len(decrypted)+2, column=0, pady=(30,0), sticky="nsew")
 
-        self.save_button = ctk.CTkButton(self, text="Save", command=self.save_button, corner_radius=0)
+        self.save_button = ctk.CTkButton(self, text="Save", command=self.save_callback, corner_radius=0)
         self.save_button.grid(row=len(decrypted)+2, column=1, pady=(30,0), sticky="nsew")
 
-    def quit_button(self):
+    def quit_callback(self):
         self.master.quit()
 
-    def save_button(self):pass
+    def save_callback(self):pass
 
     def callback_add(self):
         master = self.master
