@@ -28,6 +28,7 @@ class MainWindow(ctk.CTk):
         self.userkey = None
         self.decrypted_content:dict = None
         self.popup = None
+        self.unsaved_changes = False
 
         self.title(APP_NAME)
         self.geometry("700x500")
@@ -67,7 +68,6 @@ class MainWindow(ctk.CTk):
         self.datajson = data.load_data(USER_DATA)
         if self.username and self.userkey:
             self.decrypted_content = decrypt_the_content(self.datajson[self.username]["content"], self.userkey)
-
 
 if __name__ == "__main__":
     ctk.set_appearance_mode("system")

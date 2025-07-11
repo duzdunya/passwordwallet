@@ -3,9 +3,11 @@ import os
 from conf.settings import *
 from sec import encryption
 
+# Config file contains only key and values
 default_config = {"welcome_shown":False, "bgmode":"Dark"}
 default_data = {}
 
+# Edit the config file with given key and values.
 def save_config(path, key, value):
     if os.path.exists(path):
         with open(file=path,mode="r") as file:
@@ -14,6 +16,8 @@ def save_config(path, key, value):
         with open(file=path,mode="w") as file:
             file.write(json.dumps(json_data))
 
+# This method creates new config file if not exists.
+# If exists and gives json decode error, then overwrites it as default config and returns it.
 def load_config(path) -> dict:
     if os.path.exists(path):
         try:
@@ -26,9 +30,9 @@ def load_config(path) -> dict:
         else:
             return data
     else:
-        with open(file=path,mode="w") as file:
+        with open(file=path, mode="w") as file:
             file.write(json.dumps(default_config))
-        return load_config(path)
+        return default_config 
 
 def save_data(path, username, userdata):
     if os.path.exists(path):

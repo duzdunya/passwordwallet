@@ -11,7 +11,6 @@ class WelcomePage(ctk.CTkFrame):
         super().__init__(master)
         self.grid_rowconfigure((0,1), weight=1)
         self.grid_columnconfigure(0, weight=1)
-
         self.text = ctk.CTkTextbox(self,wrap=WORD)
         self.text.grid(row=0,rowspan=2, column=0, sticky="nsew")
         self.text.insert("0.0","Hello!,\n\nWelcome to my Application for savig passwords safely.\n\nFirst you need to register with your master password. !!!Dont forget your master password!!! If you forget it, then you cannot reach your data!\n\nAfter you logged in, you can add your data with input fields.\n - Add 'note' to remember the use area of key and value. 'note' area must be unique.\n - 'key' area is mostly email or phone number, 'value' area is password.\n - All 'name', 'key' and 'values' are encrypted.\n\nAuthor: Ali Çine")
@@ -127,9 +126,8 @@ class ContentPage(ctk.CTkScrollableFrame):
         self.initialize_content()
 
     def initialize_content(self):
-        self.master.reload_data()
         for x in self.winfo_children():
-            x.destroy()
+            x.grid_forget()
         
         note_title= ctk.CTkLabel(self, text="Note")
         note_title.grid(row=0, column=0)
@@ -140,7 +138,12 @@ class ContentPage(ctk.CTkScrollableFrame):
         value_title = ctk.CTkLabel(self, text="Value")
         value_title.grid(row=0, column=2)
 
-        decrypted = self.master.decrypted_content
+        decrypted:dict = self.master.decrypted_content
+        # format for "decrypted" content is:
+        #  {"note":
+        #    {"key": ,
+        #    "value": value},
+        #  }
         for index,i in enumerate(decrypted):
             setattr(self, f'note_entry{index}', ctk.CTkEntry(self,corner_radius=0))
             note_entry=getattr(self, f'note_entry{index}')
@@ -154,35 +157,78 @@ class ContentPage(ctk.CTkScrollableFrame):
             key_entry.insert("0",decrypted[i]["key"])
             key_entry.configure(state="readonly")
 
-            setattr(self, f'value_entry{index}', ctk.CTkEntry(self, corner_radius=0))
+            setattr(self, f'value_entry{index}', ctk.CTkEntry(self, corner_radius=0, show="*"))
+            setattr(self, f'value_entry_state{index}',False)
+
             value_entry = getattr(self, f'value_entry{index}')
             value_entry.grid(row=index+1, column=2, sticky="nsew")
             value_entry.insert("0",decrypted[i]["value"])
             value_entry.configure(state="readonly")
 
+            setattr(self, f'show_value_btn{index}', ctk.CTkButton(self,text="show", corner_radius=50, command= lambda ix=index: self.show_btn(ix), width=10, height=10))
+            getattr(self, f'show_value_btn{index}').grid(row=index+1, column=3, sticky="w", padx=5)
 
+        len_dec = len(decrypted)
         self.note_add = ctk.CTkEntry(self, placeholder_text="add Note", corner_radius=0)
-        self.note_add.grid(row=len(decrypted)+1, column=0, pady=(30,0), sticky="nsew")
+        self.note_add.grid(row=len_dec+1, column=0, pady=(30,0), sticky="nsew")
         
         self.key_add = ctk.CTkEntry(self, placeholder_text="add Key", corner_radius=0)
-        self.key_add.grid(row=len(decrypted)+1, column=1, pady=(30,0), sticky="nsew")
+        self.key_add.grid(row=len_dec+1, column=1, pady=(30,0), sticky="nsew")
 
         self.value_add= ctk.CTkEntry(self, placeholder_text="add Value", corner_radius=0)
-        self.value_add.grid(row=len(decrypted)+1, column=2, pady=(30,0), sticky="nsew")
+        self.value_add.grid(row=len_dec+1, column=2, pady=(30,0), sticky="nsew")
+
+
 
         self.add_button = ctk.CTkButton(self, text="Add", command=self.callback_add, corner_radius=0)
-        self.add_button.grid(row=len(decrypted)+1, column=3, pady=(30,0), sticky="nsew")
+        self.add_button.grid(row=len_dec+1, column=3, pady=(30,0), sticky="nsew")
 
         self.quit_button = ctk.CTkButton(self, text="Quit", command=self.quit_callback, corner_radius=0, fg_color="#F23333", hover_color="#C62828")
-        self.quit_button.grid(row=len(decrypted)+2, column=0, pady=(30,0), sticky="nsew")
+        self.quit_button.grid(row=len_dec+2, column=0, pady=(30,0), sticky="nsew")
 
         self.save_button = ctk.CTkButton(self, text="Save", command=self.save_callback, corner_radius=0)
-        self.save_button.grid(row=len(decrypted)+2, column=1, pady=(30,0), sticky="nsew")
+        self.save_button.grid(row=len_dec+2, column=1, pady=(30,0), sticky="nsew")
 
+        self.reload_button = ctk.CTkButton(self, text="Reload", command=self.reload_callback, corner_radius=0)
+        self.reload_button.grid(row=len_dec+2, column=2, pady=(30,0), sticky="nsew")
+
+    def show_btn(self, ix):
+        value_entry = getattr(self, f'value_entry{ix}')
+        if getattr(self, f'value_entry_state{ix}'):
+            value_entry.configure(show="*")
+            setattr(self, f'value_entry_state{ix}',False)
+        else:
+            value_entry.configure(show="")
+            setattr(self, f'value_entry_state{ix}',True)
+    
     def quit_callback(self):
-        self.master.quit()
+        master = self.master
+        if master.unsaved_changes:
+            master.popup = PopUpFrame(master, "You have unsaved changes!")
+        else:
+            self.master.quit()
 
-    def save_callback(self):pass
+    def save_callback(self):
+        master = self.master
+        if master.unsaved_changes:
+            encrypted_content = encrypt_the_content(master.decrypted_content, master.userkey)
+            try:
+                save_content(USER_DATA, master.username, encrypted_content)
+            except Exception as e:
+                raise e
+            else:
+                master.unsaved_changes = False
+                master.popup = PopUpFrame(master, "Saved Successfully.")
+        else:
+            master.popup = PopUpFrame(master, "You dont have any changes.")
+
+    def reload_callback(self):
+        master = self.master
+        if master.unsaved_changes:
+            master.popup = PopUpFrame(master, "You have unsaved changes, save before reloading data.")
+        else:
+            master.reload_data()
+            self.initialize_content()
 
     def callback_add(self):
         master = self.master
@@ -209,6 +255,7 @@ class ContentPage(ctk.CTkScrollableFrame):
                 master.popup = PopUpFrame(master, "Note Area must be unique")
                 return
         master.decrypted_content[note_val] = {"key":key_val, "value":value_val}
-        newcontent = encrypt_the_content(master.decrypted_content,master.userkey)
-        save_content(USER_DATA, master.username, newcontent)
+        master.unsaved_changes = True
+        master.popup = PopUpFrame(master, "Added Successfully")
         self.initialize_content()
+

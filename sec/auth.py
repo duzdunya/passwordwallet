@@ -4,12 +4,14 @@ import customtkinter as ctk
 class PopUpFrame(ctk.CTkToplevel):
     def __init__(self,master,label="", **kwargs):
         super().__init__(master, **kwargs)
-
         self.label=ctk.CTkLabel(self, text=label)
         self.label.grid(row=0,column=0)
 
+
         self.ok = ctk.CTkButton(self, text="Ok", command=self.ok_callback)
         self.ok.grid(row=1,column=0)
+
+        self.bind("<Return>",lambda x: self.ok_callback())
 
     def ok_callback(self):
         self.destroy()
