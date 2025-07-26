@@ -127,6 +127,8 @@ class ContentPage(ctk.CTkScrollableFrame):
         super().__init__(master)
         self.grid_columnconfigure((0,1,2,3), weight=1)
         self.master = master
+        self.visibility_on = ctk.CTkImage(Image.open("assets/visibility.png"))
+        self.visibility_off = ctk.CTkImage(Image.open("assets/visibility-off.png"))
 
     def grid(self, *args, **kwargs):
         super().grid(sticky="nsew",*args, **kwargs)
@@ -172,7 +174,7 @@ class ContentPage(ctk.CTkScrollableFrame):
             value_entry.insert("0",decrypted[i]["value"])
             value_entry.configure(state="readonly")
 
-            setattr(self, f'show_value_btn{index}', ctk.CTkButton(self,text="show", corner_radius=50, command= lambda ix=index: self.show_btn(ix), width=10, height=10))
+            setattr(self, f'show_value_btn{index}', ctk.CTkButton(self,text="", image=self.visibility_off, corner_radius=50, command= lambda ix=index: self.show_btn(ix), width=10, height=10))
             getattr(self, f'show_value_btn{index}').grid(row=index+1, column=3, sticky="w", padx=5)
 
         len_dec = len(decrypted)
@@ -203,9 +205,11 @@ class ContentPage(ctk.CTkScrollableFrame):
         value_entry = getattr(self, f'value_entry{ix}')
         if getattr(self, f'value_entry_state{ix}'):
             value_entry.configure(show="*")
+            getattr(self, f'show_value_btn{ix}').configure(image=self.visibility_off)
             setattr(self, f'value_entry_state{ix}',False)
         else:
             value_entry.configure(show="")
+            getattr(self, f'show_value_btn{ix}').configure(image=self.visibility_on)
             setattr(self, f'value_entry_state{ix}',True)
     
     def quit_callback(self):
