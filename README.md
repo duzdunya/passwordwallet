@@ -1,27 +1,30 @@
-## Installation
+# About
+This application serves to store your passwords, in a secure, simple way, the data is saved locally on your computer. Using the different users you have registered, the master password is entered into the application. The data is decrypted with the master password, the master password is hashed, if you forget it, your life can be ruined. The application includes cryptography, user interface, and file read-write.
+
+# Installation
+### 1) Clone
 ```
 git clone https://github.com/duzdunya/passwordwallet.git
-
-cd passwordwallet
 ```
-## Create Virtual Environment
+### 2) Create virtual environment in newly cloned directory
 ```
 python3 -m venv venv
 ```
-## Activate Virtual Environment
+### 3) Activate virtual environment
+#### on Windows
 ```
-# Windows
 venv/Scripts/activate
 ```
+
+#### on Linux/macOS
 ```
-# Linux
 source venv/bin/activate
 ```
-## Install Requirements
+### 4) Install Requirements
 ```
 pip install -r requirements.txt
 ```
-## Start
+### 5) Start the app
 ```
 python3 main.py
 ```
