@@ -5,6 +5,7 @@ from sec.encryption import get_hashed_password, encrypt_the_content, decrypt_the
 from user.data import add_new_user, save_content
 from conf.settings import USER_DATA
 from tkinter import WORD
+from PIL import Image
 
 class WelcomePage(ctk.CTkFrame):
     def __init__(self, master):
@@ -49,6 +50,12 @@ class LoginPage(ctk.CTkFrame):
 
         self.register_button=ctk.CTkButton(self,text_color="gray100",text='create an account',command=self.register_callback,fg_color=('gray50','gray15'),hover_color=('gray60','gray20'))
         self.register_button.grid(row=6,column=0,pady=(10,20))
+
+        self.info_btn = ctk.CTkButton(self, fg_color="#383838", hover_color="#626262",width=20,height=20,text="", image=ctk.CTkImage(Image.open("info.png")), command=self.info_callback)
+        self.info_btn.place(relx=0.84,rely=0.9)
+
+    def info_callback(self) -> NoReturn:
+        self.master.popup = PopUpFrame(self,"To encrypt data in the app, you need to register before you can start storing it.\n This app does not communicate with the internet, everything is stored locally. Content is encrypted and decrypted using your master password, master password is not stored as plain text.\n\n Data is stored\n\nOn Linux:\n'~/.config/password_wallet'\n\nOn macOS:\n'/Users/<username>/Library/Application Support/password_wallet'\n\nOn Windows:\n'C:\\Users\\<username>\\AppData\\Local\\duzdunya\\password_wallet'\n\nAuthor: Ali Çine")
 
     def login_callback(self) -> NoReturn:
         if login_check(self.username_entry.get(), self.password_entry.get(), self.master.datajson, self.master):
@@ -122,7 +129,7 @@ class ContentPage(ctk.CTkScrollableFrame):
         self.master = master
 
     def grid(self, *args, **kwargs):
-        super().grid(*args, **kwargs)
+        super().grid(sticky="nsew",*args, **kwargs)
         self.initialize_content()
 
     def initialize_content(self):

@@ -2,7 +2,8 @@ from platformdirs import user_config_dir
 import os
 
 APP_NAME = "password_wallet" 
-APP_DIR= user_config_dir(APP_NAME)
+AUTHOR_NAME = "duzdunya"
+APP_DIR= user_config_dir(APP_NAME, AUTHOR_NAME)
 USR_DIR= os.path.join(APP_DIR, "usr")
 if not os.path.exists(APP_DIR):
     os.makedirs(APP_DIR, exist_ok=True)

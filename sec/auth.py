@@ -5,11 +5,11 @@ class PopUpFrame(ctk.CTkToplevel):
     def __init__(self,master,label="", **kwargs):
         super().__init__(master, **kwargs)
         self.label=ctk.CTkLabel(self, text=label)
-        self.label.grid(row=0,column=0)
+        self.label.grid(row=0,column=0, padx=30, pady=30)
 
 
-        self.ok = ctk.CTkButton(self, text="Ok", command=self.ok_callback)
-        self.ok.grid(row=1,column=0)
+        self.ok = ctk.CTkButton(self, text="Ok", corner_radius=0, command=self.ok_callback)
+        self.ok.grid(row=1,column=0, padx=10, pady=10)
 
         self.bind("<Return>",lambda x: self.ok_callback())
 

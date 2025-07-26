@@ -58,7 +58,7 @@ class MainWindow(ctk.CTk):
         if from_page is not None:
             from_page.grid_forget()
         if to_page is not None:
-            to_page.grid(row=0, column=0, sticky="nsew")
+            to_page.grid(row=0, column=0)
 
     # Add a object to frame dictionary with string key
     def add_frame(self,name:str, frame:object):
