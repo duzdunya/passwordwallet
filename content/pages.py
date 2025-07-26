@@ -51,7 +51,7 @@ class LoginPage(ctk.CTkFrame):
         self.register_button=ctk.CTkButton(self,text_color="gray100",text='create an account',command=self.register_callback,fg_color=('gray50','gray15'),hover_color=('gray60','gray20'))
         self.register_button.grid(row=6,column=0,pady=(10,20))
 
-        self.info_btn = ctk.CTkButton(self, fg_color="#383838", hover_color="#626262",width=20,height=20,text="", image=ctk.CTkImage(Image.open("info.png")), command=self.info_callback)
+        self.info_btn = ctk.CTkButton(self, fg_color="#383838", hover_color="#626262",width=20,height=20,text="", image=ctk.CTkImage(Image.open("assets/info.png")), command=self.info_callback)
         self.info_btn.place(relx=0.84,rely=0.9)
 
     def info_callback(self) -> NoReturn:
